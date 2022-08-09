@@ -13,7 +13,7 @@ const getById = async (id) => {
     return Promise.resolve(CHARACTERS.filter((c) => c.id == id)[0]);
 };
 
-const create = async ({ name, aliases, bookId, user }) => {
+const create = async ({ name, aliases, notes, bookId, user }) => {
     return new Promise((resolve) => {
         let existingBook;
     if(bookId) {
@@ -34,6 +34,7 @@ const create = async ({ name, aliases, bookId, user }) => {
         id: uuid.v4(),
         name,
         aliases,
+        notes,
         book: existingBook,
         user,
     };
@@ -42,7 +43,7 @@ const create = async ({ name, aliases, bookId, user }) => {
     });
 };
 
-const updateById = async (id, { name, aliases, bookId, user }) => {
+const updateById = async (id, { name, aliases, notes, bookId, user }) => {
     return new Promise((resolve) => {
         let existingBook;
     if(bookId) {
@@ -63,6 +64,7 @@ const updateById = async (id, { name, aliases, bookId, user }) => {
         id,
         name,
         aliases,
+        notes,
         book: existingBook,
         user,
     };

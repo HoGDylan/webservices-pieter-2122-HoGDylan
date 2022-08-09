@@ -27,6 +27,7 @@ let CHARACTERS = [
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff87',
         name: 'Kelsier',
         aliases: ['Survivor', 'Lord of Scars', 'Thaidakar'],
+        notes: 'Blond dude with scars that dies and becomes a messiah on Scadrial',
         user: {
             id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
             name: 'Dylan Rathé',
@@ -43,6 +44,7 @@ let CHARACTERS = [
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff88',
         name: 'Leshwi',
         aliases: [],
+        notes: 'High ranking Fused who seems to not be all evil',
         user: {
             id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
             name: 'Dylan Rathé',
@@ -59,6 +61,7 @@ let CHARACTERS = [
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff86',
         name: 'Szeth',
         aliases: ['Assassin in White'],
+        notes: 'Bald Shin man who swore loyalty to Dalinar',
         user: {
             id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
             name: 'Dylan Rathé',
