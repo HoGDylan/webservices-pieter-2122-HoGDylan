@@ -4,21 +4,18 @@ let BOOKS = [
         name: 'The Final Empire',
         serie: 'Mistborn',
         serieNr: 1,
-        autor: 'Brandon Sanderson',
     },
     {
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff85',
         name: 'The Way of Kings',
         serie: 'Stormlight Archive',
         serieNr: 1,
-        autor: 'Brandon Sanderson',
     },
     {   
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff83',
         name: 'Rhythm of War',
         serie: 'Stormlight Archive',
         serieNr: 4,
-        autor: 'Brandon Sanderson',
     },
 ];
 

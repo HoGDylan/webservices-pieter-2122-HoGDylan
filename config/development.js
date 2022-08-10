@@ -12,5 +12,7 @@ module.exports = {
         host: 'localhost',
         port: 3306,
         name: 'charactercon',
+        username: 'root',
+        password: 'D519CHEr?'
     }
 };

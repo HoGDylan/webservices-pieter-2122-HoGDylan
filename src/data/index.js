@@ -9,8 +9,8 @@ const DATABASE_CLIENT = config.get('database.client');
 const DATABASE_NAME = config.get('database.name');
 const DATABASE_HOST = config.get('database.host');
 const DATABASE_PORT = config.get('database.port');
-const DATABASE_USERNAME = config.get('env');
-const DATABASE_PASSWORD = config.get('env');
+const DATABASE_USERNAME = config.get('database.username');
+const DATABASE_PASSWORD = config.get('database.password');
 
 let knexInstance;
 
@@ -26,7 +26,7 @@ async function initializeData() {
             password: DATABASE_PASSWORD,
             insecureAuth: isDevelopment,
         },
-        debug: true,
+        debug: true,// dit moet soms weg!
     };
 
     knexInstance = knex(knexOptions);
@@ -41,6 +41,19 @@ async function initializeData() {
     return knexInstance;
 }
 
+function getKnex(){
+    if(!knexInstance) throw new Error('Please initialize the data layer before getting the Knex instance');
+    return knexInstance;
+}
+
+const tables = Object.freeze({
+    character: 'characters',
+    book: 'books',
+    users: 'users',
+});
+
 module.exports = {
-    initializeData
+    initializeData,
+    getKnex,
+    tables,
 };
