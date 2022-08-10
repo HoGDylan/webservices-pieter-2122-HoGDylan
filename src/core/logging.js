@@ -9,3 +9,4 @@ const logger = winston.createLogger({
   });
 
 module.exports.getLogger = () => logger;
+
