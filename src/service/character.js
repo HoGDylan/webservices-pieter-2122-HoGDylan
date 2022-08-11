@@ -1,89 +1,61 @@
-const uuid = require('uuid');
+const config = require('config');
+//const uuid = require('uuid');
 const { getChildLogger } = require('../core/logging');
-let { CHARACTERS } = require('../data/mock-data');
-const bookService = require('./book');
 const characterRepository = require('../repository/character');
+
+const DEFAULT_PAGINATION_LIMIT = config.get('pagination.limit');
+const DEFAULT_PAGINATION_OFFSET = config.get('pagination.offset');
 
 const debugLog = (message, meta = {}) => {
 	if (!this.logger) this.logger = getChildLogger('character-service');
 	this.logger.debug(message, meta);
 };
 
-const getAll = async () => {
-    return Promise.resolve({
-        data: CHARACTERS,
-        count: CHARACTERS.length,
-    });
+const getAll = async (
+    limit = DEFAULT_PAGINATION_LIMIT, 
+    offset = DEFAULT_PAGINATION_OFFSET
+) => {
+	debugLog('Fetching all characters', { limit, offset });
+	const data = await characterRepository.findAll({ limit, offset });
+	const count = await characterRepository.findCount();
+	return { 
+		data,
+        count,
+        limit,
+        offset, 
+	};
 };
 
 const getById = async (id) => {
+    debugLog(`Fetching character with id ${id}`);
     return Promise.resolve(characterRepository.findById(id));
 };
 
 const create = async ({ name, notes, bookId, userId }) => {
-    return new Promise((resolve) => {
-    if(bookId) {
-        const existingBook = bookService.getById(bookId);
-        if(!existingBook) {
-            throw ServiceError.notFound(`There is no book with id ${id}.`, { id });
-        }
-    }
+    debugLog('Creating new character', { name, notes, bookId, userId });
 
-    if(typeof user == 'string') {
-        user = {
-            id: uuid.v4(),
-            name: user,
-        };
-    }
-
-    const newCharacter = {
-        id: uuid.v4(),
-        name,
-        notes,
-        book: bookService.getById(bookId),
-        userId,
-    };
-    debugLog('Creating new character', newCharacter);
-    CHARACTERS = [...CHARACTERS, newCharacter];
-    resolve(newCharacter);
-    });
-};
-
-const updateById = async (id, { name, notes, bookId, userId }) => {
-    debugLog(`Updating character with id ${id}`, {
+	return characterRepository.create({
 		name,
 		notes,
 		bookId,
 		userId,
 	});
+};
 
-    if (bookId) {
-		const existingBook = bookService.getById(bookId);
+const updateById = async (id, { name, notes, bookId, userId }) => {
+    debugLog('Updating character', { name, notes, bookId, userId });
 
-		if (!existingBook) {
-			throw ServiceError.notFound(`There is no book with id ${id}.`, { id });
-		}
-	}
-	const index = CHARACTERS.findIndex((character) => character.id === id);
-
-	if (index < 0) return null;
-
-	const character = CHARACTERS[index];
-	character.name = name;
-	character.notes = notes;
-	character.book = bookService.getById(bookId);
-	if (userId) {
-		character.user = userId;
-	}
-
-	return character;
+	return characterRepository.updateById(id, {
+		name,
+		notes,
+		bookId,
+		userId,
+	});
 };
 
 const deleteById = async (id) => {
-    return new Promise((resolve) => {
-        CHARACTERS = CHARACTERS.filter((c) => c.id != id);
-        resolve();
-    });
+    debugLog(`Deleting character with id ${id}`);
+    await characterRepository.deleteById(id);
 };
 
 module.exports = {

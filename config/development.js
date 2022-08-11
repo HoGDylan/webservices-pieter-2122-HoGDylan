@@ -14,5 +14,9 @@ module.exports = {
         name: 'charactercon',
         username: 'root',
         password: 'D519CHEr?'
-    }
+    },
+    pagination: {
+        limit: 100,
+        offset: 0,
+    },
 };

@@ -4,7 +4,7 @@ const knex = require('knex');
 const {getChildLogger} = require('../core/logging')
 
 const NODE_ENV = config.get('env');
-const isDevelopment = NODE_ENV == 'development';
+const isDevelopment = NODE_ENV === 'development';
 
 const DATABASE_CLIENT = config.get('database.client');
 const DATABASE_NAME = config.get('database.name');
@@ -22,7 +22,7 @@ async function initializeData() {
         connection:{
             host: DATABASE_HOST,
             port: DATABASE_PORT,
-            database: DATABASE_NAME,
+            //database: DATABASE_NAME,
             user: DATABASE_USERNAME,
             password: DATABASE_PASSWORD,
             insecureAuth: isDevelopment,
@@ -31,12 +31,22 @@ async function initializeData() {
         migrations: {
             tableName: 'knex_meta',
             directory: join('src', 'data', 'migrations')
+        },
+        seeds: {
+            directory: join('src', 'data', 'seeds')
         }
     };
 
     knexInstance = knex(knexOptions);
 
     try {
+        await knexInstance.raw('SELECT 1+1 AS result');
+        await knexInstance.raw(`CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME}`);
+
+        await knexInstance.destroy();
+
+        knexOptions.connection.database = DATABASE_NAME;
+        knexInstance = knex(knexOptions);
         await knexInstance.raw('SELECT 1+1 AS result');
     } catch(error){
         logger.error(error.message, {error});
@@ -62,6 +72,16 @@ async function initializeData() {
             });
         }
         throw new Error('Migrations failed');
+    }
+
+    if(isDevelopment){
+        try{
+            await knexInstance.seed.run();
+        }catch(error){
+            logger.error('Error while seeding database', {
+                error
+            });
+        }
     }
 
     logger.info('Data Layer Initialized');
