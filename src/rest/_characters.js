@@ -2,24 +2,24 @@ const Router = require('@koa/router');
 const characterService = require('../service/character');
 
 const getAllCharacters = async (ctx) => {
-	ctx.body = characterService.getAll();
+	ctx.body = await characterService.getAll();
 };
 
 const createCharacter = async (ctx) => {
-	const newCharacter = characterService.create(ctx.request.body);
+	const newCharacter = await characterService.create(ctx.request.body);
 	ctx.body = newCharacter;
 };
 
 const getCharacterById = async (ctx) => {
-	ctx.body = characterService.getById(ctx.params.id);
+	ctx.body = await characterService.getById(ctx.params.id);
 };
 
 const updateCharacter = async (ctx) => {
-	ctx.body = characterService.updateById(ctx.params.id, ctx.request.body);
+	ctx.body = await characterService.updateById(ctx.params.id, ctx.request.body);
 };
 
 const deleteCharacter = async (ctx) => {
-	characterService.deleteById(ctx.params.id);
+	await characterService.deleteById(ctx.params.id);
 	ctx.status = 204;
 };
 

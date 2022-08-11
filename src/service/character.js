@@ -1,6 +1,13 @@
 const uuid = require('uuid');
-const { getLogger } = require('../core/logging');
-let { CHARACTERS, BOOKS } = require('../data/mock-data');
+const { getChildLogger } = require('../core/logging');
+let { CHARACTERS } = require('../data/mock-data');
+const bookService = require('./book');
+const characterRepository = require('../repository/character');
+
+const debugLog = (message, meta = {}) => {
+	if (!this.logger) this.logger = getChildLogger('character-service');
+	this.logger.debug(message, meta);
+};
 
 const getAll = async () => {
     return Promise.resolve({
@@ -10,16 +17,15 @@ const getAll = async () => {
 };
 
 const getById = async (id) => {
-    return Promise.resolve(CHARACTERS.filter((c) => c.id == id)[0]);
+    return Promise.resolve(characterRepository.findById(id));
 };
 
-const create = async ({ name, aliases, notes, bookId, user }) => {
+const create = async ({ name, notes, bookId, userId }) => {
     return new Promise((resolve) => {
-        let existingBook;
     if(bookId) {
-        existingBook = BOOKS.filter((b) => b.id == bookId)[0];
+        const existingBook = bookService.getById(bookId);
         if(!existingBook) {
-            getLogger().error(`There is no book with id ${bookId}`);
+            throw ServiceError.notFound(`There is no book with id ${id}.`, { id });
         }
     }
 
@@ -33,46 +39,44 @@ const create = async ({ name, aliases, notes, bookId, user }) => {
     const newCharacter = {
         id: uuid.v4(),
         name,
-        aliases,
         notes,
-        book: existingBook,
-        user,
+        book: bookService.getById(bookId),
+        userId,
     };
+    debugLog('Creating new character', newCharacter);
     CHARACTERS = [...CHARACTERS, newCharacter];
     resolve(newCharacter);
     });
 };
 
-const updateById = async (id, { name, aliases, notes, bookId, user }) => {
-    return new Promise((resolve) => {
-        let existingBook;
-    if(bookId) {
-        existingBook = PLACES.filter((b) => b.id == bookId)[0];
-        if(!existingBook) {
-            getLogger().error(`There is no book with id ${bookId}`);
-        }
-    }
+const updateById = async (id, { name, notes, bookId, userId }) => {
+    debugLog(`Updating character with id ${id}`, {
+		name,
+		notes,
+		bookId,
+		userId,
+	});
 
-    if(typeof user == 'string') {
-        user = {
-            id: uuid.v4(),
-            name: user,
-        };
-    }
+    if (bookId) {
+		const existingBook = bookService.getById(bookId);
 
-    const updatedCharacter = {
-        id,
-        name,
-        aliases,
-        notes,
-        book: existingBook,
-        user,
-    };
-    CHARACTERS = CHARACTERS.map((char) => {
-        return char.id == id ? updatedCharacter : char;
-    });
-    resolve(getById(id));
-    });
+		if (!existingBook) {
+			throw ServiceError.notFound(`There is no book with id ${id}.`, { id });
+		}
+	}
+	const index = CHARACTERS.findIndex((character) => character.id === id);
+
+	if (index < 0) return null;
+
+	const character = CHARACTERS[index];
+	character.name = name;
+	character.notes = notes;
+	character.book = bookService.getById(bookId);
+	if (userId) {
+		character.user = userId;
+	}
+
+	return character;
 };
 
 const deleteById = async (id) => {
