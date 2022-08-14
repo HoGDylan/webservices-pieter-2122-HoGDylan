@@ -9,11 +9,7 @@ module.exports = {
     },
     database:{
         client: 'mysql2',
-        host: 'localhost',
-        port: 3306,
         name: 'charactercon',
-        username: 'root',
-        password: 'D519CHEr?'
     },
     pagination: {
         limit: 100,
