@@ -2,12 +2,15 @@ const Router = require('@koa/router');
 const characterService = require('../service/character');
 
 const getAllCharacters = async (ctx) => {
-	ctx.body = await characterService.getAll();
+	const limit = ctx.query.limit && Number(ctx.query.limit);
+	const offset = ctx.query.offset && Number(ctx.query.offset);
+	ctx.body = await characterService.getAll(limit, offset);
 };
 
 const createCharacter = async (ctx) => {
 	const newCharacter = await characterService.create(ctx.request.body);
 	ctx.body = newCharacter;
+	ctx.status = 201;
 };
 
 const getCharacterById = async (ctx) => {

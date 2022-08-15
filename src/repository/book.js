@@ -43,7 +43,7 @@ const create = async ({
           id,
           name,
           serie,
-          serieNr,
+          serieNr
         });
   
       return await findById(id);
@@ -56,20 +56,19 @@ const create = async ({
     }
 };
 
-const updateById = async ({
+const updateById = async (id, {
     name,
     serie,
     serieNr,
   }) => {
     try {
-      const id = uuid.v4();
       await getKnex()(tables.book)
         .update({
-          id,
           name,
           serie,
-          serieNr,
-        });
+          serieNr
+        })
+        .where(`${tables.book}.id`, id);;
   
       return await findById(id);
     } catch (error) {

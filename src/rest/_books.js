@@ -7,20 +7,21 @@ const getAllBooks = async (ctx) => {
 };
 
 const createBook = async (ctx) => {
-	const newBook = bookService.create(ctx.request.body);
+	const newBook = await bookService.create(ctx.request.body);
 	ctx.body = newBook;
+	ctx.status = 201
 };
 
 const getBookById = async (ctx) => {
-	ctx.body = bookService.getById(ctx.params.id);
+	ctx.body = await bookService.getById(ctx.params.id);
 };
 
 const updateBook = async (ctx) => {
-	ctx.body = bookService.updateById(ctx.params.id, ctx.request.body);
+	ctx.body = await bookService.updateById(ctx.params.id, ctx.request.body);
 };
 
 const deleteBook = async (ctx) => {
-	bookService.deleteById(ctx.params.id);
+	await bookService.deleteById(ctx.params.id);
 	ctx.status = 204;
 };
 

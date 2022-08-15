@@ -29,15 +29,15 @@ const getById = (id) => {
 	return booksRepository.findById(id);
 };
 
-const create = ({ name, serie, serienr }) => {
-	const newBook = { name, serie, serienr };
+const create = ({ name, serie, serieNr }) => {
+	const newBook = { name, serie, serieNr };
 	debugLog('Creating new book', newBook);
 	return booksRepository.create(newBook);
 };
 
-const updateById = (id, { name, serie, serienr }) => {
-	const updatedBook = { name, serie, serienr}
-	debugLog(`Updating book with id ${id}`, { name, serie, serienr });
+const updateById = (id, { name, serie, serieNr }) => {
+	const updatedBook = { name, serie, serieNr}
+	debugLog(`Updating book with id ${id}`, { name, serie, serieNr });
 	return booksRepository.updateById(id, updatedBook);
 };
 
