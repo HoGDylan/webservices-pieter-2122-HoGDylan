@@ -9,7 +9,7 @@ module.exports = {
     },
     database:{
         client: 'mysql2',
-        name: 'charactercon',
+        name: 'charactercon_test',
     },
     pagination: {
         limit: 100,
