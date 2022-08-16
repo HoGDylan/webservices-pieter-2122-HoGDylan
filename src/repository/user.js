@@ -40,6 +40,12 @@ const findById = (id) => {
     .first();
 };
 
+const findByEmail = (email) => {
+  return getKnex()(tables.user)
+    .where('email', email)
+    .first();
+}
+
 /**
  * Create a new user with the given `name`.
  *
@@ -122,6 +128,7 @@ module.exports = {
   findAll,
   findCount,
   findById,
+  findByEmail,
   create,
   updateById,
   deleteById,

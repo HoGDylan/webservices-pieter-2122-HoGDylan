@@ -24,6 +24,17 @@ const deleteUserById = async (ctx) => {
   ctx.status = 204;
 };
 
+const login = async (ctx) => {
+  const { email, password } = ctx.request.body;
+  const response = await userService.login(email, password);
+  ctx.body = response;
+};
+
+const register = async (ctx) => {
+  const response = await userService.register(ctx.request.body);
+  ctx.body = response;
+};
+
 /**
  * Install user routes in the given router.
  *
@@ -34,6 +45,9 @@ module.exports = function installUsersRoutes(app) {
     prefix: '/users',
   });
 
+  router.post('/login', login);
+  router.post('/register', register);
+  
   router.get('/', getAllUsers);
   router.get('/:id', getUserById);
   router.put('/:id', updateUserById);

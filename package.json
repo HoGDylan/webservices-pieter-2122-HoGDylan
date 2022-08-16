@@ -4,16 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "npx env-cmd nodemon src/index.js",
+    "start": "npx env-cmd nodemon",
     "test": "npx env-cmd -f .env.test jest",
     "test:coverage": "yarn test --coverage"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "src",
-      "node_module",
-      "config"
-    ]
   },
   "dependencies": {
     "@koa/cors": "^3.3.0",
@@ -21,6 +14,7 @@
     "argon2": "^0.28.7",
     "config": "^3.3.7",
     "env-cmd": "^10.1.0",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^2.2.0",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",

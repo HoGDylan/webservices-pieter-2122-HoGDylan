@@ -21,6 +21,12 @@ module.exports = {
             hashLength: 32,
             timeCost: 6,
             memoryCost: 2 ** 17,
+        },
+        jwt: {
+            secret: 'eensupermoeilijksecretdatniemandmagradenwantanderskunnenzedesitehacken',
+            expirationInterval: 60 * 60 * 1000,
+            issuer: 'charactercon.hogent.be',
+            audience: 'charactercon.hogent.be',
         }
     }
 };

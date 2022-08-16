@@ -1,6 +1,8 @@
+const { JsonWebTokenError } = require('jsonwebtoken');
 const supertest = require('supertest');
 const createServer = require('../../src/createServer');
 const { getKnex, tables } = require('../../src/data');
+const Roles = require('../../src/core/roles')
 
 const data = {
     characters: [
@@ -36,8 +38,11 @@ const data = {
     ],
     users: [
         {
-            id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
-            name: "Test User",
+            id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+            name: 'Test User',
+            email: 'test@email.com',
+            password_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
+            roles: JSON.stringify([Roles.USER]),
         }
     ]
 };

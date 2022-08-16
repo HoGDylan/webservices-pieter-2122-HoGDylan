@@ -1,10 +1,36 @@
 const { getChildLogger } = require('../core/logging');
-const { hashPassword } = require('../core/password');
+const { generateJWT } = require('../core/jwt');
+const { hashPassword, verifyPassword } = require('../core/password');
+const Roles = require('../core/roles');
 const userRepository = require('../repository/user');
 
 const debugLog = (message, meta = {}) => {
 	if (!this.logger) this.logger = getChildLogger('user-service');
 	this.logger.debug(message, meta);
+};
+
+const makeExposedUser = ({ password_hash, ...user }) => user;
+
+const makeLoginData = async (user) => {
+  const token = await generateJWT(user);
+  return {
+    token,
+    user: makeExposedUser(user),
+  };
+};
+
+const login = async(email, password) => {
+  const user = await userRepository.findByEmail(email);
+  if(!user) {
+    throw new Error('The given email and password do not match');
+  }
+
+  const passwordValid = await verifyPassword(password, user.password_hash);
+  if(!passwordValid) {
+    throw new Error('The given email and password do not match');
+  }
+
+  return makeLoginData(user);
 };
 
 /**
@@ -20,12 +46,13 @@ const register = async ({
 }) => {
   debugLog('Creating a new user', { name });
   const passwordHash = await hashPassword(password);
-  return userRepository.create({
+  const user = await userRepository.create({
     name,
     email,
     passwordHash,
-    roles: ['user'],
+    roles: [Roles.USER],
   });
+  return await makeLoginData(user);
 };
 
 
@@ -110,6 +137,7 @@ const deleteById = async (id) => {
 };
 
 module.exports = {
+  login,
   register,
   getAll,
   getById,
