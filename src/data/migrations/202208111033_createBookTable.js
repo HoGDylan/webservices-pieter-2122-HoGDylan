@@ -9,7 +9,7 @@ module.exports = {
             table.string('name', 255)
                 .notNullable();
 
-            table.unique('name', 'idx_place_name_unique');
+            table.unique('name', 'idx_book_name_unique');
 
             table.string('serie', 255);
             table.integer('serieNr');

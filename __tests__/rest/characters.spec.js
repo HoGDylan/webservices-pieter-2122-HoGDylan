@@ -51,7 +51,7 @@ const dataToDelete = {
     users: ['7f28c5f9-d711-4cd6-ac15-d13d71abff80'],
 };
 
-describe('Transaction', () => {
+describe('Characters', () => {
     let server;
     let request;
     let knex;
@@ -127,6 +127,7 @@ describe('Transaction', () => {
             });
         });
     });
+
     describe('GET /api/characters/:id', () => {
         beforeAll(async () => {
             await knex(tables.book).insert(data.books);
@@ -165,6 +166,7 @@ describe('Transaction', () => {
             });
         });
     });
+
     describe('POST /api/characters', () => {
         const charactersToDelete = [];
 
@@ -209,4 +211,75 @@ describe('Transaction', () => {
             charactersToDelete.push(response.body.id);
         });
     });
+
+    describe('PUT /api/characters/:id', () => {    
+        beforeAll(async () => {
+          await knex(tables.book).insert(data.books);
+          await knex(tables.user).insert(data.users);
+          await knex(tables.character).insert(data.characters[0]);
+        });
+    
+        afterAll(async () => {
+          await knex(tables.character)
+            .where('id', dataToDelete.characters[0])
+            .delete();
+    
+          await knex(tables.book)
+            .whereIn('id', dataToDelete.books)
+            .delete();
+    
+          await knex(tables.user)
+            .whereIn('id', dataToDelete.users)
+            .delete();
+        });
+    
+        test('it should 200 and return the updated character', async () => {
+            const characterId = data.characters[0].id;
+            const response = await request.put(`${url}/${characterId}`)
+                .send({
+                name: 'Character 1.5',
+                notes: 'The updated version of the first character.',
+                bookId: '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
+                userId: '7f28c5f9-d711-4cd6-ac15-d13d71abff80'
+                });
+        
+            expect(response.status).toBe(200);
+            expect(response.body.id).toBeTruthy();
+            expect(response.body.name).toBe('Character 1.5');
+            expect(response.body.notes).toBe('The updated version of the first character.');
+            expect(response.body.book).toEqual({
+                id: '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
+                name: 'Test Book',
+            });
+            expect(response.body.user).toEqual({
+                id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+                name: 'Test User',
+            });
+        });
+      });
+
+      describe('DELETE /api/characters/:id', () => {
+        beforeAll(async () => {
+            await knex(tables.book).insert(data.books);
+            await knex(tables.user).insert(data.users);
+            await knex(tables.character).insert(data.characters[0]);
+          });
+      
+          afterAll(async () => {      
+            await knex(tables.book)
+              .whereIn('id', dataToDelete.books)
+              .delete();
+      
+            await knex(tables.user)
+              .whereIn('id', dataToDelete.users)
+              .delete();
+          });
+    
+        test('it should 204 and return nothing', async () => {
+            const characterId = data.characters[0].id;
+            const response = await request.delete(`${url}/${characterId}`);
+            expect(response.status).toBe(204);
+            expect(response.body).toEqual({});
+        });
+      });
 });

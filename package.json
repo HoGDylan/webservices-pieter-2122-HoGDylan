@@ -5,16 +5,20 @@
   "license": "MIT",
   "scripts": {
     "start": "npx env-cmd nodemon src/index.js",
-    "test": "npx env-cmd -f .env.test jest"
+    "test": "npx env-cmd -f .env.test jest",
+    "test:coverage": "yarn test --coverage"
   },
   "jest": {
     "testPathIgnorePatterns": [
-      "src", "node_module", "config"
+      "src",
+      "node_module",
+      "config"
     ]
   },
   "dependencies": {
     "@koa/cors": "^3.3.0",
     "@koa/router": "^10.1.1",
+    "argon2": "^0.28.7",
     "config": "^3.3.7",
     "env-cmd": "^10.1.0",
     "knex": "^2.2.0",
