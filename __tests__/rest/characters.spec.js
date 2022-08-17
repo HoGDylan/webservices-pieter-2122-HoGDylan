@@ -1,8 +1,7 @@
-const { JsonWebTokenError } = require('jsonwebtoken');
-const supertest = require('supertest');
-const createServer = require('../../src/createServer');
-const { getKnex, tables } = require('../../src/data');
-const Roles = require('../../src/core/roles')
+const { tables } = require('../../src/data');
+//const { login } = require('../../src/service/user');
+const { withServer, login } = require('../supertest.setup');
+const Roles = require('../../src/core/roles');
 
 const data = {
     characters: [
@@ -36,15 +35,6 @@ const data = {
             serieNr: 1,
         },
     ],
-    users: [
-        {
-            id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
-            name: 'Test User',
-            email: 'test@email.com',
-            password_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
-            roles: JSON.stringify([Roles.USER]),
-        }
-    ]
 };
 const dataToDelete = {
     characters: [
@@ -53,21 +43,19 @@ const dataToDelete = {
         '7f28c5f9-d711-4cd6-ac15-d13d71abff83'
     ],
     books: ['7f28c5f9-d711-4cd6-ac15-d13d71abff84'],
-    users: ['7f28c5f9-d711-4cd6-ac15-d13d71abff80'],
 };
 
 describe('Characters', () => {
-    let server;
     let request;
     let knex;
+    let loginHeader;
 
-    beforeAll(async() => {
-        server = await createServer();
-        knex = getKnex();
-        request = supertest(server.getApp().callback());
+    withServer(({ supertest: s, knex: k }) => {
+        request = s;
+        knex = k;
     });
-    afterAll(async() => {
-        await server.stop();
+    beforeAll(async () => {
+        loginHeader = await login(request);
     });
 
     const url = '/api/characters';
@@ -75,15 +63,11 @@ describe('Characters', () => {
     describe('GET /api/characters', () => {
         beforeAll(async () => {
             await knex(tables.book).insert(data.books);
-            await knex(tables.user).insert(data.users);
             await knex(tables.character).insert(data.characters);
         });
         afterAll(async() => {
             await knex(tables.character)
                 .whereIn('id', dataToDelete.characters)
-                .delete();
-            await knex(tables.user)
-                .whereIn('id', dataToDelete.users)
                 .delete();
             await knex(tables.book)
                 .whereIn('id', dataToDelete.books)
@@ -91,7 +75,7 @@ describe('Characters', () => {
         });
 
         it('should 200 and return all characters', async() => {
-            const response = await request.get(url);
+            const response = await request.get(url).set('Authorization', loginHeader);
             expect(response.status).toBe(200);
             expect(response.body.limit).toBe(100);
             expect(response.body.offset).toBe(0);
@@ -99,7 +83,7 @@ describe('Characters', () => {
         });
 
         it('should 200 and paginate the lsit of transactions', async() => {
-            const response = await request.get(`${url}?limit=2&offset=1`);
+            const response = await request.get(`${url}?limit=2&offset=1`).set('Authorization', loginHeader);
             expect(response.status).toBe(200);
             expect(response.body.limit).toBe(2);
             expect(response.body.offset).toBe(1);
@@ -136,15 +120,11 @@ describe('Characters', () => {
     describe('GET /api/characters/:id', () => {
         beforeAll(async () => {
             await knex(tables.book).insert(data.books);
-            await knex(tables.user).insert(data.users);
             await knex(tables.character).insert(data.characters[0]);
         });
         afterAll(async() => {
             await knex(tables.character)
                 .where('id', dataToDelete.characters[0])
-                .delete();
-            await knex(tables.user)
-                .whereIn('id', dataToDelete.users)
                 .delete();
             await knex(tables.book)
                 .whereIn('id', dataToDelete.books)
@@ -153,7 +133,7 @@ describe('Characters', () => {
 
         it('should 200 and return the requested character', async() => {
             const characterId = data.characters[0].id;
-            const response = await request.get(`${url}/${characterId}`)
+            const response = await request.get(`${url}/${characterId}`).set('Authorization', loginHeader);
 
             expect(response.status).toBe(200);
             expect(response.body).toEqual({
@@ -177,7 +157,6 @@ describe('Characters', () => {
 
         beforeAll(async () => {
             await knex(tables.book).insert(data.books);
-            await knex(tables.user).insert(data.users);
         });
         afterAll(async() => {
             await knex(tables.character)
@@ -186,13 +165,11 @@ describe('Characters', () => {
             await knex(tables.book)
                 .whereIn('id', dataToDelete.books)
                 .delete();
-            await knex(tables.user)
-                .whereIn('id', dataToDelete.users)
-                .delete();
         });
 
         it('should 201 and return the created character', async() => {
             const response = await request.post(url)
+                .set('Authorization', loginHeader)
                 .send({
                     name: 'Created Character',
                     notes: 'This character was just created!',
@@ -220,7 +197,6 @@ describe('Characters', () => {
     describe('PUT /api/characters/:id', () => {    
         beforeAll(async () => {
           await knex(tables.book).insert(data.books);
-          await knex(tables.user).insert(data.users);
           await knex(tables.character).insert(data.characters[0]);
         });
     
@@ -232,15 +208,12 @@ describe('Characters', () => {
           await knex(tables.book)
             .whereIn('id', dataToDelete.books)
             .delete();
-    
-          await knex(tables.user)
-            .whereIn('id', dataToDelete.users)
-            .delete();
         });
     
         test('it should 200 and return the updated character', async () => {
             const characterId = data.characters[0].id;
             const response = await request.put(`${url}/${characterId}`)
+                .set('Authorization', loginHeader)
                 .send({
                 name: 'Character 1.5',
                 notes: 'The updated version of the first character.',
@@ -266,7 +239,6 @@ describe('Characters', () => {
       describe('DELETE /api/characters/:id', () => {
         beforeAll(async () => {
             await knex(tables.book).insert(data.books);
-            await knex(tables.user).insert(data.users);
             await knex(tables.character).insert(data.characters[0]);
           });
       
@@ -274,15 +246,11 @@ describe('Characters', () => {
             await knex(tables.book)
               .whereIn('id', dataToDelete.books)
               .delete();
-      
-            await knex(tables.user)
-              .whereIn('id', dataToDelete.users)
-              .delete();
           });
     
-        test('it should 204 and return nothing', async () => {
+        it('should 204 and return nothing', async () => {
             const characterId = data.characters[0].id;
-            const response = await request.delete(`${url}/${characterId}`);
+            const response = await request.delete(`${url}/${characterId}`).set('Authorization', loginHeader);
             expect(response.status).toBe(204);
             expect(response.body).toEqual({});
         });

@@ -1,4 +1,5 @@
 const Router = require('@koa/router');
+const { requireAuthentication } = require('../core/auth');
 const bookService = require('../service/book');
 
 const getAllBooks = async (ctx) => {
@@ -35,11 +36,11 @@ module.exports = (app) => {
 		prefix: '/books',
 	});
 
-	router.get('/', getAllBooks);
-	router.post('/', createBook);
-	router.get('/:id', getBookById);
-	router.put('/:id', updateBook);
-	router.delete('/:id', deleteBook);
+	router.get('/', requireAuthentication, getAllBooks);
+	router.post('/', requireAuthentication, createBook);
+	router.get('/:id', requireAuthentication, getBookById);
+	router.put('/:id', requireAuthentication, updateBook);
+	router.delete('/:id', requireAuthentication, deleteBook);
 
 	app.use(router.routes()).use(router.allowedMethods());
 };

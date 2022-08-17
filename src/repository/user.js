@@ -44,7 +44,7 @@ const findByEmail = (email) => {
   return getKnex()(tables.user)
     .where('email', email)
     .first();
-}
+};
 
 /**
  * Create a new user with the given `name`.

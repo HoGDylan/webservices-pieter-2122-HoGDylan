@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.88% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>31/45</span>
+                <span class='fraction'>45/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.66% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.88% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>31/45</span>
+                <span class='fraction'>45/45</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -112,28 +112,15 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -153,32 +140,45 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const Router = require('@koa/router');
 const bookService = require('../service/book');
 &nbsp;
-const getAllBooks = <span class="fstat-no" title="function not covered" >async (ctx) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >	const { limit, offset } = ctx.query;</span>
-<span class="cstat-no" title="statement not covered" >	ctx.body = await bookService.getAll(Number(limit), Number(offset));</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+const getAllBooks = async (ctx) =&gt; {
+	const { limit, offset } = ctx.query;
+	ctx.body = await bookService.getAll(Number(limit), Number(offset));
+};
 &nbsp;
-const createBook = <span class="fstat-no" title="function not covered" >async (ctx) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >	const newBook = await bookService.create(ctx.request.body);</span>
-<span class="cstat-no" title="statement not covered" >	ctx.body = newBook;</span>
-<span class="cstat-no" title="statement not covered" >	ctx.status = 201</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+const createBook = async (ctx) =&gt; {
+	const newBook = await bookService.create(ctx.request.body);
+	ctx.body = newBook;
+	ctx.status = 201
+};
 &nbsp;
-const getBookById = <span class="fstat-no" title="function not covered" >async (ctx) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >	ctx.body = await bookService.getById(ctx.params.id);</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+const getBookById = async (ctx) =&gt; {
+	ctx.body = await bookService.getById(ctx.params.id);
+};
 &nbsp;
-const updateBook = <span class="fstat-no" title="function not covered" >async (ctx) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >	ctx.body = await bookService.updateById(ctx.params.id, ctx.request.body);</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+const updateBook = async (ctx) =&gt; {
+	ctx.body = await bookService.updateById(ctx.params.id, ctx.request.body);
+};
 &nbsp;
-const deleteBook = <span class="fstat-no" title="function not covered" >async (ctx) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >	await bookService.deleteById(ctx.params.id);</span>
-<span class="cstat-no" title="statement not covered" >	ctx.status = 204;</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+const deleteBook = async (ctx) =&gt; {
+	await bookService.deleteById(ctx.params.id);
+	ctx.status = 204;
+};
 &nbsp;
 /**
  * Install transaction routes in the given router.
@@ -205,7 +205,7 @@ module.exports = (app) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-08-16T13:23:14.715Z
+                at 2022-08-17T07:47:09.236Z
             </div>
         <script src="../prettify.js"></script>
         <script>

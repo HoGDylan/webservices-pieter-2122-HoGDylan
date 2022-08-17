@@ -1,5 +1,6 @@
 const Router = require('@koa/router');
 const characterService = require('../service/character');
+const { requireAuthentication } = require('../core/auth');
 
 const getAllCharacters = async (ctx) => {
 	const limit = ctx.query.limit && Number(ctx.query.limit);
@@ -36,11 +37,11 @@ module.exports = (app) => {
 		prefix: '/characters',
 	});
 
-	router.get('/', getAllCharacters);
-	router.post('/', createCharacter);
-	router.get('/:id', getCharacterById);
-	router.put('/:id', updateCharacter);
-	router.delete('/:id', deleteCharacter);
+	router.get('/', requireAuthentication, getAllCharacters);
+	router.post('/', requireAuthentication, createCharacter);
+	router.get('/:id', requireAuthentication, getCharacterById);
+	router.put('/:id', requireAuthentication, updateCharacter);
+	router.delete('/:id', requireAuthentication, deleteCharacter);
 
 	app.use(router.routes()).use(router.allowedMethods());
 };

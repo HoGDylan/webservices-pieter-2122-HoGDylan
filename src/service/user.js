@@ -1,5 +1,5 @@
 const { getChildLogger } = require('../core/logging');
-const { generateJWT } = require('../core/jwt');
+const { generateJWT, verifyJWT } = require('../core/jwt');
 const { hashPassword, verifyPassword } = require('../core/password');
 const Roles = require('../core/roles');
 const userRepository = require('../repository/user');
@@ -136,6 +136,41 @@ const deleteById = async (id) => {
   }*/
 };
 
+const checkAndParseSession = async (authHeader) => {
+  if (!authHeader) {
+    throw ServiceError.unauthorized('You need to be signed in');
+  }
+
+  if (!authHeader.startsWith('Bearer ')) {
+    throw ServiceError.unauthorized('Invalid authentication token');
+  }
+
+  const authToken = authHeader.substr(7);
+  try {
+    const {
+      roles, userId,
+    } = await verifyJWT(authToken);
+
+    return {
+      userId,
+      roles,
+      authToken,
+    };
+  } catch (error) {
+    const logger = getChildLogger('user-service');
+    logger.error(error.message, { error });
+    throw ServiceError.unauthorized(error.message);
+  }
+};
+
+const checkRole = (role, roles) => {
+  const hasPermission = roles.includes(role);
+
+  if (!hasPermission) {
+    throw new Error('You are not allowed to view this part of the application');
+  }
+};
+
 module.exports = {
   login,
   register,
@@ -143,4 +178,6 @@ module.exports = {
   getById,
   updateById,
   deleteById,
+  checkAndParseSession,
+  checkRole,
 };
