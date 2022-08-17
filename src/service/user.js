@@ -1,6 +1,7 @@
 const { getChildLogger } = require('../core/logging');
 const { generateJWT, verifyJWT } = require('../core/jwt');
 const { hashPassword, verifyPassword } = require('../core/password');
+const ServiceError = require('../core/serviceError');
 const Roles = require('../core/roles');
 const userRepository = require('../repository/user');
 
