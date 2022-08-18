@@ -1,6 +1,7 @@
 const uuid = require('uuid');
 const { getChildLogger } = require('../core/logging');
 const { getKnex, tables } = require('../data');
+const useTryAsync = require("no-try").useTryAsync;
 
 const SELECT_COLUMNS = [
     `${tables.character}.id`, `${tables.character}.name`, 'notes',
@@ -57,22 +58,31 @@ const findById = async (id) => {
 const create = async ({
     name, notes, bookId, userId
 }) => {
-    try{
-        const id = uuid.v4();
-        await getKnex()(tables.character)
-            .insert({
-                id,
-                name,
-                notes,
-                book_id: bookId,
-                user_id: userId
-            });
-        return await findById(id);
-    } catch (error){
+    const id = uuid.v4();
+    const [error] = await useTryAsync(() => 
+      getKnex()(tables.character)
+        .insert({
+          id,
+          name,
+          notes,
+          book_id: bookId,
+          user_id: userId
+      }),
+      error => {
         const logger = getChildLogger('character-repo');
         logger.error('Error in create', {error});
-        throw error;
-    }
+      }
+    );
+    const [error2, newCharacter] = await useTryAsync(
+      () => findById(id),
+      error2 => {
+        const logger = getChildLogger('character-repo');
+        logger.error('Error in create', {error});
+      });
+    if(error) throw error;
+    if(error2) throw error2;
+
+    return newCharacter;
 };
 
 const updateById = async (id, {

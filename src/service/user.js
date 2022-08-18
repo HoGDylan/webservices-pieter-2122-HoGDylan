@@ -4,6 +4,8 @@ const { hashPassword, verifyPassword } = require('../core/password');
 const ServiceError = require('../core/serviceError');
 const Roles = require('../core/roles');
 const userRepository = require('../repository/user');
+const useTry = require("no-try").useTry;
+const useTryAsync = require("no-try").useTryAsync;
 
 const debugLog = (message, meta = {}) => {
 	if (!this.logger) this.logger = getChildLogger('user-service');
@@ -144,7 +146,7 @@ const checkAndParseSession = async (authHeader) => {
   }
 
   const authToken = authHeader.substr(7);
-  try {
+  /*try {
     const {
       roles, userId,
     } = await verifyJWT(authToken);
@@ -158,7 +160,21 @@ const checkAndParseSession = async (authHeader) => {
     const logger = getChildLogger('user-service');
     logger.error(error.message, { error });
     throw ServiceError.unauthorized(error.message);
-  }
+  }*/
+  const [error, { roles, userId }] = await useTryAsync(
+    () => verifyJWT(authToken),
+    error => {
+      const logger = getChildLogger('user-service');
+      logger.error(error.message, { error });
+    }
+  );
+  if(error) throw ServiceError.unauthorized(error.message);
+
+  return {
+    userId,
+    roles,
+    authToken,
+  };
 };
 
 const checkRole = (role, roles) => {

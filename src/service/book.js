@@ -1,5 +1,4 @@
 const config = require('config');
-//const uuid = require('uuid');
 const { getChildLogger } = require('../core/logging');
 const booksRepository = require('../repository/book')
 

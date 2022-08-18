@@ -2,6 +2,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const { getLogger } = require('./logging');
 const ServiceError = require('./serviceError');
+const _ = require('lodash');
 
 const JWT_AUDIENCE = config.get('auth.jwt.audience');
 const JWT_ISSUER = config.get('auth.jwt.issuer');
@@ -18,7 +19,7 @@ module.exports.generateJWT = (user) => {
         audience: JWT_AUDIENCE,
         issuer: JWT_ISSUER,
         subject: 'auth',
-        expiresIn: Math.floor(JWT_EXPIRATION_INTERVAL / 1000),
+        expiresIn: _.floor(JWT_EXPIRATION_INTERVAL / 1000),
     };
 
     return new Promise((resolve, reject) => {
