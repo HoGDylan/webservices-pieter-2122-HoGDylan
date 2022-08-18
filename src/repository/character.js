@@ -70,14 +70,14 @@ const create = async ({
       }),
       error => {
         const logger = getChildLogger('character-repo');
-        logger.error('Error in create', {error});
+        logger.error('Error in create: when creating character', {error});
       }
     );
     const [error2, newCharacter] = await useTryAsync(
       () => findById(id),
-      error2 => {
+      error => {
         const logger = getChildLogger('character-repo');
-        logger.error('Error in create', {error});
+        logger.error('Error in create: to find created character', {error});
       });
     if(error) throw error;
     if(error2) throw error2;
@@ -88,38 +88,43 @@ const create = async ({
 const updateById = async (id, {
     name, notes, bookId, userId
   }) => {
-    try {
-      await getKnex()(tables.character)
+    const [error] = await useTryAsync(() => 
+      getKnex()(tables.character)
         .update({
+          id,
           name,
           notes,
           book_id: bookId,
-          user_id: userId,
-        })
-        .where(`${tables.character}.id`, id);
-      return await findById(id);
-    } catch (error) {
-      const logger = getChildLogger('character-repo');
-      logger.error('Error in updateById', {
-        error,
+          user_id: userId
+      }),
+      error => {
+        const logger = getChildLogger('character-repo');
+        logger.error('Error in update: when updating character', {error});
+      }
+    );
+    const [error2, updatedCharacter] = await useTryAsync(
+      () => findById(id),
+      error => {
+        const logger = getChildLogger('character-repo');
+        logger.error('Error in update: when finding updated character', {error});
       });
-      throw error;
-    }
+    if(error) throw error;
+    if(error2) throw error2;
+
+    return updatedCharacter;
   };
 
   const deleteById = async (id) => {
-    try {
-      const rowsAffected = await getKnex()(tables.character)
+    const [error, rowsAffected] = await useTryAsync(() => 
+      getKnex()(tables.character)
         .delete()
-        .where(`${tables.character}.id`, id);
-      return rowsAffected > 0;
-    } catch (error) {
-      const logger = getChildLogger('character-repo');
-      logger.error('Error in deleteById', {
-        error,
+        .where(`${tables.character}.id`, id),
+      error => {
+        const logger = getChildLogger('character-repo');
+        logger.error('Error in deleteById', {error});
       });
-      throw error;
-    }
+      if(error) throw error;
+      return rowsAffected > 0;
   };
 
 module.exports = {

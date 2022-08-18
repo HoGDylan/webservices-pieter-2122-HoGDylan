@@ -1,6 +1,7 @@
 const uuid = require('uuid');
 const { tables, getKnex } = require('../data');
 const { getChildLogger } = require('../core/logging');
+const useTryAsync = require("no-try").useTryAsync;
 
 /**
  * Get all `limit` users, skip the first `offset`.
@@ -58,24 +59,31 @@ const create = async ({
   passwordHash,
   roles,
 }) => {
-  try {
-    const id = uuid.v4();
-    await getKnex()(tables.user)
-      .insert({
-        id,
-        name,
-        email,
-        password_hash: passwordHash,
-        roles: JSON.stringify(roles),
+  const id = uuid.v4();
+    const [error] = await useTryAsync(() => 
+      getKnex()(tables.user)
+        .insert({
+          id,
+          name,
+          email,
+          password_hash: passwordHash,
+          roles: JSON.stringify(roles),
+      }),
+      error => {
+        const logger = getChildLogger('user-repo');
+        logger.error('Error in create: when creating user', {error});
+      }
+    );
+    const [error2, newUser] = await useTryAsync(
+      () => findById(id),
+      error => {
+        const logger = getChildLogger('user-repo');
+        logger.error('Error in create: to find created user', {error});
       });
-    return await findById(id);
-  } catch (error) {
-    const logger = getChildLogger('users-repo');
-    logger.error('Error in create', {
-      error,
-    });
-    throw error;
-  }
+    if(error) throw error;
+    if(error2) throw error2;
+
+    return newUser;
 };
 
 /**
@@ -88,20 +96,30 @@ const create = async ({
 const updateById = async (id, {
   name,
 }) => {
-  try {
-    await getKnex()(tables.user)
+  const [error] = await useTryAsync(() => 
+    getKnex()(tables.user)
       .update({
+        id,
         name,
-      })
-      .where('id', id);
-    return await findById(id);
-  } catch (error) {
-    const logger = getChildLogger('users-repo');
-    logger.error('Error in updateById', {
-      error,
+        email,
+        password_hash: passwordHash,
+        roles: JSON.stringify(roles),
+    }),
+    error => {
+      const logger = getChildLogger('user-repo');
+      logger.error('Error in update: when updating user', {error});
+    }
+  );
+  const [error2, newUser] = await useTryAsync(
+    () => findById(id),
+    error => {
+      const logger = getChildLogger('user-repo');
+      logger.error('Error in update: to find updating user', {error});
     });
-    throw error;
-  }
+  if(error) throw error;
+  if(error2) throw error2;
+
+  return newUser;
 };
 
 /**
@@ -110,18 +128,16 @@ const updateById = async (id, {
  * @param {string} id - Id of the user to delete.
  */
 const deleteById = async (id) => {
-  try {
-    const rowsAffected = await getKnex()(tables.user)
-      .delete()
-      .where('id', id);
-    return rowsAffected > 0;
-  } catch (error) {
-    const logger = getChildLogger('users-repo');
-    logger.error('Error in deleteById', {
-      error,
-    });
-    throw error;
-  }
+  const [error, rowsAffected] = await useTryAsync(() => 
+  getKnex()(tables.user)
+    .delete()
+    .where(`${tables.user}.id`, id),
+  error => {
+    const logger = getChildLogger('user-repo');
+    logger.error('Error in deleteById', {error});
+  });
+  if(error) throw error;
+  return rowsAffected > 0;
 };
 
 module.exports = {

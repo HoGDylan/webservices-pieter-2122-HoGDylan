@@ -1,6 +1,7 @@
 const uuid = require('uuid');
 const { getKnex, tables } = require('../data');
 const { getChildLogger } = require('../core/logging');
+const useTryAsync = require("no-try").useTryAsync;
 
 const findAll = ({
     limit,
@@ -36,24 +37,30 @@ const create = async ({
     serie,
     serieNr,
   }) => {
-    try {
-      const id = uuid.v4();
-      await getKnex()(tables.book)
+    const id = uuid.v4();
+    const [error] = await useTryAsync(() => 
+      getKnex()(tables.book)
         .insert({
           id,
           name,
           serie,
           serieNr
-        });
-  
-      return await findById(id);
-    } catch (error) {
-      const logger = getChildLogger('books-repo');
-      logger.error('Error in create', {
-        error,
+      }),
+      error => {
+        const logger = getChildLogger('book-repo');
+        logger.error('Error in create: when creating book', {error});
+      }
+    );
+    const [error2, newBook] = await useTryAsync(
+      () => findById(id),
+      error => {
+        const logger = getChildLogger('book-repo');
+        logger.error('Error in create: when finding created book', {error});
       });
-      throw error;
-    }
+    if(error) throw error;
+    if(error2) throw error2;
+
+    return newBook;
 };
 
 const updateById = async (id, {
@@ -61,39 +68,42 @@ const updateById = async (id, {
     serie,
     serieNr,
   }) => {
-    try {
-      await getKnex()(tables.book)
+    const [error] = await useTryAsync(() => 
+      getKnex()(tables.book)
         .update({
+          id,
           name,
           serie,
           serieNr
-        })
-        .where(`${tables.book}.id`, id);;
-  
-      return await findById(id);
-    } catch (error) {
-      const logger = getChildLogger('books-repo');
-      logger.error('Error in updateById', {
-        error,
+      }),
+      error => {
+        const logger = getChildLogger('book-repo');
+        logger.error('Error in update: when updating book', {error});
+      }
+    );
+    const [error2, updatedBook] = await useTryAsync(
+      () => findById(id),
+      error => {
+        const logger = getChildLogger('book-repo');
+        logger.error('Error in update: when finding updated book', {error});
       });
-      throw error;
-    }
+    if(error) throw error;
+    if(error2) throw error2;
+
+    return updatedBook;
 };
 
 const deleteById = async (id) => {
-    try {
-      const rowsAffected = await getKnex()(tables.book)
-        .delete()
-        .where('id', id);
-  
-      return rowsAffected > 0;
-    } catch (error) {
-      const logger = getChildLogger('books-repo');
-      logger.error('Error in deleteById', {
-        error,
-      });
-      throw error;
-    }
+  const [error, rowsAffected] = await useTryAsync(() => 
+  getKnex()(tables.book)
+    .delete()
+    .where(`${tables.book}.id`, id),
+  error => {
+    const logger = getChildLogger('book-repo');
+    logger.error('Error in deleteById', {error});
+  });
+  if(error) throw error;
+  return rowsAffected > 0;
 };
 
 module.exports = {
