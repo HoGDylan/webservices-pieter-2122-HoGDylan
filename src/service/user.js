@@ -23,12 +23,12 @@ const makeLoginData = async (user) => {
 const login = async(email, password) => {
   const user = await userRepository.findByEmail(email);
   if(!user) {
-    throw new Error('The given email and password do not match');
+    throw ServiceError.unauthorized('The given email and password do not match');
   }
 
   const passwordValid = await verifyPassword(password, user.password_hash);
   if(!passwordValid) {
-    throw new Error('The given email and password do not match');
+    throw ServiceError.unauthorized('The given email and password do not match');
   }
 
   return makeLoginData(user);
@@ -88,16 +88,13 @@ const register = async ({
  */
 const getById = async (id) => {
   debugLog(`Fetching user with id ${id}`);
-  /*
   const user = await userRepository.findById(id);
 
   if (!user) {
-    throw new Error(`No user with id ${id} exists`, { id });
+    throw ServiceError.notFound(`No user with id ${id} exists`, { id });
   }
 
-  return user;
-  */
-  return Promise.resolve(userRepository.findById(id));
+  return makeExposedUser(user);
 };
 
 
@@ -130,11 +127,11 @@ const updateById = (id, { name }) => {
 const deleteById = async (id) => {
   debugLog(`Deleting user with id ${id}`);
   await userRepository.deleteById(id);
-  /*const deleted = await userRepository.deleteById(id);
+  const deleted = await userRepository.deleteById(id);
 
   if (!deleted) {
-    throw new Error(`No user with id ${id} exists`, { id });
-  }*/
+    throw ServiceError.notFound(`No user with id ${id} exists`, { id });
+  }
 };
 
 const checkAndParseSession = async (authHeader) => {
@@ -168,7 +165,7 @@ const checkRole = (role, roles) => {
   const hasPermission = roles.includes(role);
 
   if (!hasPermission) {
-    throw new Error('You are not allowed to view this part of the application');
+    throw ServiceError.forbidden('You are not allowed to view this part of the application');
   }
 };
 

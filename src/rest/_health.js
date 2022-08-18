@@ -1,13 +1,16 @@
 const Router = require('@koa/router');
+const validate = require('./_validation');
 const healthService = require('../service/health');
 
 const ping = async (ctx) => {
   ctx.body = healthService.ping();
 };
+ping.validationScheme = null;
 
 const getVersion = async (ctx) => {
   ctx.body = healthService.getVersion();
 };
+getVersion.validationScheme = null;
 
 /**
  * Install health routes in the given router.
@@ -19,8 +22,8 @@ module.exports = function installHealthRoutes(app) {
     prefix: '/health',
   });
 
-  router.get('/ping', ping);
-  router.get('/version', getVersion);
+  router.get('/ping', validate(ping.validationScheme), ping);
+  router.get('/version', validate(getVersion.validationScheme), getVersion);
 
   app
     .use(router.routes())

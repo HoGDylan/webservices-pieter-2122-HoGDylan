@@ -21,6 +21,8 @@ const getAll = async (
 	return { 
 		data, 
 		count, 
+    limit,
+    offset,
 	};
 };
 

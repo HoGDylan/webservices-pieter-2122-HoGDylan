@@ -25,24 +25,44 @@ const createCharacter = async (ctx) => {
 	ctx.status = 201;
 };
 createCharacter.validationScheme = {
-	body: Joi.object({
-		name: Joi.string(),
+	body: {
+		name: Joi.string().max(255),
 		notes: Joi.string(),
 		bookId: Joi.string().uuid(),
-	})
+	},
 }
 
 const getCharacterById = async (ctx) => {
 	ctx.body = await characterService.getById(ctx.params.id);
 };
+getCharacterById.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+};
 
 const updateCharacter = async (ctx) => {
 	ctx.body = await characterService.updateById(ctx.params.id, ctx.request.body);
+};
+updateCharacter.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
+  body: {
+		name: Joi.string().max(255),
+		notes: Joi.string(),
+		bookId: Joi.string().uuid(),
+	},
 };
 
 const deleteCharacter = async (ctx) => {
 	await characterService.deleteById(ctx.params.id);
 	ctx.status = 204;
+};
+deleteCharacter.validationScheme = {
+  params: {
+    id: Joi.string().uuid(),
+  },
 };
 
 /**
@@ -57,9 +77,9 @@ module.exports = (app) => {
 
 	router.get('/', requireAuthentication, validate(getAllCharacters.validationScheme), getAllCharacters);
 	router.post('/', requireAuthentication, validate(createCharacter.validationScheme), createCharacter);
-	router.get('/:id', requireAuthentication, getCharacterById);
-	router.put('/:id', requireAuthentication, updateCharacter);
-	router.delete('/:id', requireAuthentication, deleteCharacter);
+	router.get('/:id', requireAuthentication, validate(getCharacterById.validationScheme), getCharacterById);
+	router.put('/:id', requireAuthentication, validate(updateCharacter.validationScheme), updateCharacter);
+	router.delete('/:id', requireAuthentication, validate(deleteCharacter.validationScheme), deleteCharacter);
 
 	app.use(router.routes()).use(router.allowedMethods());
 };

@@ -1,5 +1,5 @@
 const config = require('config');
-//const uuid = require('uuid');
+const { ServiceError } = require('../core/serviceError');
 const { getChildLogger } = require('../core/logging');
 const characterRepository = require('../repository/character');
 
@@ -27,8 +27,14 @@ const getAll = async (
 };
 
 const getById = async (id) => {
-    debugLog(`Fetching character with id ${id}`);
-    return Promise.resolve(characterRepository.findById(id));
+	debugLog(`Fetching character with id ${id}`);
+  const character = await characterRepository.findById(id);
+
+  if (!character) {
+    throw ServiceError.notFound(`There is no character with id ${id}`, { id });
+  }
+
+  return character;
 };
 
 const create = async ({ name, notes, bookId, userId }) => {
