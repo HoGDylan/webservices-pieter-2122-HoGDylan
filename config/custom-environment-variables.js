@@ -4,6 +4,10 @@ module.exports = {
         host: 'DATABASE_HOST',
         port: 'DATABASE_PORT',
         username: 'DATABASE_USERNAME',
-        password: 'DATABASE_PASSWORD'
+        password: 'DATABASE_PASSWORD',
+        name: 'DATABASE_NAME'
+    },
+    jwt: {
+        secret: 'JWT_SECRET',
     }
 }
