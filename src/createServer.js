@@ -10,7 +10,7 @@ const installRest = require('./rest');
 const { startTimer } = require('winston');
 const ServiceError = require('./core/serviceError');
 
-const PORT = config.get('port');
+//const PORT = config.get('port');
 const HOST = config.get('host')
 const NODE_ENV = config.get('env');
 const CORS_ORIGINS = config.get('cors.origins');
@@ -112,8 +112,9 @@ module.exports = async function createServer() {
         },
         async start() {
             return new Promise((resolve) => {
-                app.listen(PORT);
-                logger.info(`Server listening on http://${HOST}:${PORT}`)
+                const port = process.env.PORT || 9000;
+                app.listen(port);
+                logger.info(`Server listening on http://${HOST}:${port}`)
                 resolve();
             });
         },
