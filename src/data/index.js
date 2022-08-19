@@ -22,7 +22,7 @@ async function initializeData() {
         connection:{
             host: DATABASE_HOST,
             port: DATABASE_PORT,
-            //database: DATABASE_NAME,
+            database: DATABASE_NAME,
             user: DATABASE_USERNAME,
             password: DATABASE_PASSWORD,
             insecureAuth: isDevelopment,
