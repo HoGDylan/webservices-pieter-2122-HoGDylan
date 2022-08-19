@@ -13,7 +13,7 @@ module.exports = async () => {
 
     const knex = getKnex();
     await knex(tables.user).insert([{
-		id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+		id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
 		name: 'Test User',
 		email: 'test.user@hogent.be',
 		password_hash:
