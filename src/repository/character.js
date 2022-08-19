@@ -96,7 +96,7 @@ const updateById = async (id, {
           notes,
           book_id: bookId,
           user_id: userId
-      }),
+      }).where('id', id),
       error => {
         const logger = getChildLogger('character-repo');
         logger.error('Error in update: when updating character', {error});

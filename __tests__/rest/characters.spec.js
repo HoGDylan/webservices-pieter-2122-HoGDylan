@@ -174,7 +174,6 @@ describe('Characters', () => {
                     name: 'Created Character',
                     notes: 'This character was just created!',
                     bookId: '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
-                    userId: '7f28c5f9-d711-4cd6-ac15-d13d71abff80'
                 });
             
             expect(response.status).toBe(201);
@@ -218,7 +217,6 @@ describe('Characters', () => {
                 name: 'Character 1.5',
                 notes: 'The updated version of the first character.',
                 bookId: '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
-                userId: '7f28c5f9-d711-4cd6-ac15-d13d71abff80'
                 });
         
             expect(response.status).toBe(200);

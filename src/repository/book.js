@@ -75,7 +75,7 @@ const updateById = async (id, {
           name,
           serie,
           serieNr
-      }),
+      }).where('id', id),
       error => {
         const logger = getChildLogger('book-repo');
         logger.error('Error in update: when updating book', {error});
