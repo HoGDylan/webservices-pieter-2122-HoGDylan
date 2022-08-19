@@ -9,21 +9,21 @@ const data = {
             id: '7f28c5f9-d711-4cd6-ac15-d13d71abff81',
             name: 'Character 1',
             notes: 'The first of the test characters.',
-            user_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+            user_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
             book_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff84"
         },
         {
             id: '7f28c5f9-d711-4cd6-ac15-d13d71abff82',
             name: 'Character 2',
             notes: 'A second test character.',
-            user_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+            user_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
             book_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff84"
         },
         {
             id: '7f28c5f9-d711-4cd6-ac15-d13d71abff83',
             name: 'Character 3',
             notes: 'The final test character.',
-            user_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+            user_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
             book_id: "7f28c5f9-d711-4cd6-ac15-d13d71abff84"
         },
     ],
@@ -93,7 +93,7 @@ describe('Characters', () => {
                 name: 'Character 2',
                 notes: 'A second test character.',
                 user: {
-                    id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+                    id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
                     name: "Test User",
                 },
                 book: {
@@ -106,7 +106,7 @@ describe('Characters', () => {
                 name: 'Character 3',
                 notes: 'The final test character.',
                 user: {
-                    id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+                    id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
                     name: "Test User",
                 },
                 book: {
@@ -141,7 +141,7 @@ describe('Characters', () => {
                 name: 'Character 1',
                 notes: 'The first of the test characters.',
                 user: {
-                    id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+                    id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
                     name: "Test User",
                 },
                 book: {
@@ -184,7 +184,7 @@ describe('Characters', () => {
                 name: 'Test Book',
             });
             expect(response.body.user).toEqual({
-                id: "7f28c5f9-d711-4cd6-ac15-d13d71abff80",
+                id: "7f28c5f9-d711-4cd6-ac15-d13d71abff90",
                 name: "Test User",
             });
             //kan korter met regex
@@ -228,7 +228,7 @@ describe('Characters', () => {
                 name: 'Test Book',
             });
             expect(response.body.user).toEqual({
-                id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+                id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
                 name: 'Test User',
             });
         });

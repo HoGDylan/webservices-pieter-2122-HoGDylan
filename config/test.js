@@ -28,6 +28,7 @@ module.exports = {
             expirationInterval: 60 * 60 * 1000,
             issuer: 'charactercon.hogent.be',
             audience: 'charactercon.hogent.be',
+            secret: 'JWT_SECRET',
         }
     }
 };
