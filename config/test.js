@@ -10,6 +10,8 @@ module.exports = {
     database:{
         client: 'mysql2',
         name: 'charactercon_test',
+        port: 3306,
+        host: 'localhost',
     },
     pagination: {
         limit: 100,
@@ -26,7 +28,6 @@ module.exports = {
             expirationInterval: 60 * 60 * 1000,
             issuer: 'charactercon.hogent.be',
             audience: 'charactercon.hogent.be',
-            secret: 'JWT_SECRET',
         }
     }
 };
